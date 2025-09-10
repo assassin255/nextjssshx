@@ -8,11 +8,9 @@ services:
     stdin_open: true
     tty: true
 
-    # Mount KVM nếu host có hỗ trợ
     devices:
       - /dev/kvm:/dev/kvm
 
-    # Cài sshx + chạy luôn khi container start
     command: >
       bash -c "apt-get update &&
                apt-get install -y curl wget iputils-ping &&
@@ -24,8 +22,5 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "4.0"
-          memory: 8G
-        reservations:
-          cpus: "2.0"
-          memory: 4G
+          cpus: "0.25"
+          memory: 256M

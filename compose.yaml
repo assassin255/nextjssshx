@@ -1,21 +1,31 @@
+version: "3.9"
+
 services:
-  app:
+  ubuntu-sshx:
+    image: ubuntu:22.04
+    container_name: ubuntu-sshx
     restart: unless-stopped
-    # domainname: www.example.xyz # uncomment if you want to use your own domain
-    build:
-      context: ./app
-      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+
+    # Mount KVM nếu host có hỗ trợ
+    devices:
+      - /dev/kvm:/dev/kvm
+
+    # Cài sshx + chạy luôn khi container start
+    command: >
+      bash -c "apt-get update &&
+               apt-get install -y curl wget iputils-ping &&
+               curl -sSf https://sshx.io/get | sh -s run"
 
     ports:
-      - target: 3000
-        mode: ingress
-        published: 3000
-
-    healthcheck:
-      test: wget -q --spider http://localhost:3000/ || exit 1
+      - "3000:3000"
 
     deploy:
       resources:
+        limits:
+          cpus: "4.0"
+          memory: 8G
         reservations:
-          cpus: "0.25"
-          memory: 256M
+          cpus: "2.0"
+          memory: 4G
